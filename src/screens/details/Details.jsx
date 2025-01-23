@@ -1,23 +1,23 @@
 import React from 'react';
-import { useState,useEffect,useCallback } from 'react';
-import { useRoute } from '@react-navigation/native';
-import { Alert,Text,View, ScrollView, TouchableOpacity } from "react-native";
-import { useMMKVString } from 'react-native-mmkv';
-import YoutubePlayer from "react-native-youtube-iframe";
 import Similar from './components/Similar';
-import Play from "../../../assets/icons/play.svg"
 import { useTranslation } from 'react-i18next';
+import Play from "../../../assets/icons/play.svg";
+import { useMMKVString } from 'react-native-mmkv';
+import { useRoute } from '@react-navigation/native';
+import { useState,useEffect,useCallback } from 'react';
+import YoutubePlayer from "react-native-youtube-iframe";
+import { Alert,Text,View, ScrollView, TouchableOpacity } from "react-native";
 
 
 const Details = () => {
-    const [viewMore,setViewMore]=useState(false);
-    const [playing,setPlaying]=useState(false);
-    const {token,setToken}=useMMKVString("accessToken");
-    const [data,setData]=useState({});
-    const [trailerKey,setTrailerKey]=useState("");
-    const route=useRoute();
-    const {id,type}=route.params
-    const { t }=useTranslation()
+  const route = useRoute();
+  const { t } = useTranslation();
+  const {id,type} = route.params;
+  const [data,setData] = useState({});
+  const [playing,setPlaying] = useState(false);
+  const [viewMore,setViewMore] = useState(false);
+  const [trailerKey,setTrailerKey] = useState("");
+  const {token,setToken} = useMMKVString("accessToken");
 
     const onStateChange = useCallback((state) => {
         if (state === "ended") {
