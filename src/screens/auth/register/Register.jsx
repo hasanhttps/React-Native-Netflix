@@ -19,7 +19,7 @@ const Register = () => {
     }
 
     const register = async () => {
-        const response = await fetch("http://192.168.0.109:3000/api/v1/auth/signup", {
+        const response = await fetch("http://192.168.0.128:3000/api/v1/auth/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

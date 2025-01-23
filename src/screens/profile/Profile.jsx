@@ -1,57 +1,72 @@
-import { Alert, Text, TouchableOpacity, View } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
-import { storage } from '../../utils/MMKVStore'
-import { request, PERMISSIONS } from 'react-native-permissions';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { storage } from '../../utils/MMKVStore';
+import { useMMKVString } from 'react-native-mmkv';
+import { Text, TouchableOpacity, View, Image } from 'react-native';
 
 const Profile = () => {
-    const [selectedImage, setSelectedImage] = useState('')
-    const [selectedImageUrl, setSelectedImageUrl] = useState('')
-    const navigation = useNavigation()
+    const [username, setUsername] = useState('');
+    const [avatar, setAvatar] = useState('');
+
+    const [selectedLanguage, setSelectedLanguage] = useMMKVString("selectedLanguage");
+    const { t } = useTranslation();
 
     useEffect(() => {
-       console.log(selectedImage)
-       console.log(selectedImageUrl)
-    }, [selectedImage, selectedImageUrl])
-    
+        setUsername(storage.getString('username') || "");
+        setAvatar(storage.getString('avatar') || '');
+    }, []);
+
+    const handleLanguage = () => {
+        setSelectedLanguage((prevState) => (prevState === "en" ? "ru" : "en"));
+    };
+
+
+    const handleLogout=async()=>{
+        try{
+            const response=await fetch(`http://192.168.0.128:3000/api/v1/auth/logout`,{
+                headers:{
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",                
+                }
+            });
+
+            storage.delete("accessToken")
+            storage.set("firstTimeUser",false)
+
+        }catch(error){
+            console.error(error);
+        }
+    }
 
     return (
-        <View className='flex-1 bg-green-400'>
-            <Text className='text-2xl font-semibold text-center mt-20'>
-                Hello, this is profile page
-            </Text>
-            <TouchableOpacity onPress={() => {
-                request(PERMISSIONS.ANDROID.READ_MEDIA_IMAGES).then((result) => {
-                    result === 'granted'
-                        ? launchImageLibrary(
-                            {
-                                mediaType: 'photo',
-                                includeBase64: true,
-                            },
-                            response => {
-                                if (!response.didCancel && !response.error) {
-                                    const imgData = response.assets[0];
-                                    setSelectedImage(imgData.base64);
-                                    setSelectedImageUrl(imgData.uri);
-                                }
-                            },
-                        ) :  Alert.alert(
-                            'Error',
-                            'Could not open image gallery',
-                          );
-                });
-            }} className='px-5 py-3 bg-violet-600 self-center w-[140px] mt-5'>
-                <Text className='text-white text-lg text-center'>Edit Profile</Text>
+        <View className='flex-1 bg-black p-4'>
+            <View className='items-center mt-10'>
+                <View className='w-[254px] h-[254px] bg-gray-500 rounded-full overflow-hidden'>
+                    {avatar ? (
+                        <Image
+                            source={{ uri: avatar }}
+                            className='w-full h-full'
+                            resizeMode='cover'
+                        />
+                    ) : (
+                        <Text className='text-white text-center mt-8'>{t("noavatar")}</Text>
+                    )}
+                </View>
+
+                <Text className='text-white font-bold text-xl mt-4'>
+                    {username}
+                </Text>
+            </View>
+
+
+            <TouchableOpacity onPress={handleLanguage} className="absolute right-7 top-3">
+                <Text className="text-white">{t("language")}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => {
-                storage.clearAll()
-            }} className='px-5 py-3 bg-red-600 self-center w-[140px] mt-5'>
-                <Text className='text-white text-lg text-center'>Logout</Text>
-            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout} className='bg-[#E50A14] mt-6 py-5 rounded-lg'><Text className='text-white text-center font-bold text-xl'>{t("logout")}</Text></TouchableOpacity>
+
         </View>
-    )
-}
+    );
+};
 
-export default Profile
+export default Profile;

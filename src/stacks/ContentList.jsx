@@ -10,7 +10,7 @@ const ContentList = ({searchTerm,type}) => {
 
   const getData = async () => {
     try {
-      const response = await fetch(searchTerm ? `http://192.168.0.109:3000/api/v1/search/${type}/${searchTerm}`:`http://192.168.0.109:3000/api/v1/${type}/trending`)
+      const response = await fetch(searchTerm ? `http://192.168.0.128:3000/api/v1/search/${type}/${searchTerm}`:`http://192.168.0.128:3000/api/v1/${type}/trending`)
       const data = await response.json()
       setData(data.content);
     } catch (error) {

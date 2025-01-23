@@ -14,7 +14,7 @@ const Poster = () => {
 
   const getShowData = async() => {
     try {
-      const response = await fetch('http://192.168.0.109:3000/api/v1/tv/trending')
+      const response = await fetch('http://192.168.0.128:3000/api/v1/tv/trending')
       const data = await response.json()
       setVisibleShow(data.content[0])
     } catch (error) {
